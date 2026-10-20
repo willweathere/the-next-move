@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+/* ── Design tokens ─────────────────────────────────────────────
+   Monochrome editorial palette with one muted lime accent.      */
+@theme {
+  --color-paper: #f5f4f0;
+  --color-paper-2: #ecebe6;
+  --color-ivory: #f3efe4;
+  --color-ink: #121212;
+  --color-ink-2: #3a3a3a;
+  --color-mute: #767672;
+  --color-line: #dcdbd6;
+  --color-line-dark: #2a2a2a;
+  --color-lime: #b4c968;
+  --color-lime-deep: #8da63f;
+  --color-water: #8ea0a8;
+  --font-serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --font-sans: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+:root { --gutter: clamp(1.25rem, 5vw, 4rem); }
+
+html { scroll-behavior: smooth; overflow-x: clip; }
+body { overflow-x: clip; }
+body { @apply bg-paper text-ink font-sans antialiased; font-size: 1.0625rem; line-height: 1.6; margin: 0; }
+h1, h2, h3 { @apply font-serif font-normal; line-height: 1; letter-spacing: -0.01em; }
+::selection { background: var(--color-lime); color: var(--color-ink); }
+:focus-visible { outline: 2px solid var(--color-lime-deep); outline-offset: 3px; }
+
+/* Shared editorial primitives */
+.eyebrow { @apply text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-mute; }
+.eyebrow--light { color: rgba(245, 244, 240, 0.6); }
+.display { font-size: clamp(2.6rem, 6.2vw, 5.6rem); }
+.rule { height: 1px; background: var(--color-line); }
+.section { padding: clamp(5rem, 11vw, 9rem) var(--gutter); }
+.wrap { max-width: 1240px; margin: 0 auto; }
+.link-line { position: relative; text-decoration: none; }
+.link-line::after { content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 0.45s var(--ease-out); }
+.link-line:hover::after, .link-line:focus-visible::after { transform: scaleX(1); }
+
+/* Chessboard pattern as a decorative texture */
+.checker { background-image: linear-gradient(45deg, var(--c, rgba(18,18,18,0.06)) 25%, transparent 25%, transparent 75%, var(--c, rgba(18,18,18,0.06)) 75%), linear-gradient(45deg, var(--c, rgba(18,18,18,0.06)) 25%, transparent 25%, transparent 75%, var(--c, rgba(18,18,18,0.06)) 75%); background-size: var(--s, 40px) var(--s, 40px); background-position: 0 0, calc(var(--s, 40px) / 2) calc(var(--s, 40px) / 2); }
+
+/* Monochrome photo treatment */
+.photo { filter: grayscale(1) contrast(1.05); }
+.photo--tint { filter: grayscale(1) contrast(1.05) brightness(0.92); }
+
+/* Water ripple (CSS only) */
+@keyframes ripple { 0% { transform: scale(0.4); opacity: 0.55; } 100% { transform: scale(1.6); opacity: 0; } }
+.ripple { position: absolute; border-radius: 9999px; border: 1px solid var(--color-water); animation: ripple 6s var(--ease-out) infinite; }
+.ripple:nth-child(2) { animation-delay: 2s; }
+.ripple:nth-child(3) { animation-delay: 4s; }
+
+/* Drawn lines */
+@keyframes draw { to { stroke-dashoffset: 0; } }
+.draw { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.in-view .draw { animation: draw 1.6s var(--ease-out) forwards; }
+.in-view .draw--late { animation-delay: 0.5s; }
+
+/* Hero board choreography */
+@keyframes boardIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes squareLit { 0%, 100% { fill-opacity: 0; } 35%, 65% { fill-opacity: 1; } }
+.board-in { animation: boardIn 1.2s var(--ease-out) both; }
+.sq-lit { fill: var(--color-lime); fill-opacity: 0; animation: squareLit 2.4s var(--ease-out) 1 both; }
+.piece-move { transition: transform 1.4s var(--ease-out); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .ripple, .sq-lit, .board-in { animation: none !important; }
+  .sq-lit { fill-opacity: 0; }
+  .draw { stroke-dashoffset: 0 !important; }
+  .piece-move { transition: none !important; }
+  *, *::before, *::after { transition-duration: 0.01ms !important; }
+}
