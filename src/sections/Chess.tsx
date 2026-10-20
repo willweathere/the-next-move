@@ -9,17 +9,6 @@ import { Open } from '../components/Detail'
 
 const MARKED: Record<number, string> = { 9: 'Gigafinal · 1', 16: 'Gigafinal · 2', 23: 'Gigafinal · 3' }
 
-function Knight({ className = '' }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 120 120" className={className} aria-hidden="true">
-      <path d="M38 102c0-26 7-40 20-52-6-3-7-13-3-19l9-13c3 3 7 6 13 7 13 6 20 20 20 36 0 20-6 29-10 41z" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinejoin="round" />
-      <path d="M58 36l-16 22 9 4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="71" cy="37" r="3" fill="currentColor" />
-      <path d="M30 102h60v9H30z" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinejoin="round" />
-    </svg>
-  )
-}
-
 export default function Chess() {
   const [hover, setHover] = useState<number | null>(null)
   const { open: openDetail } = useDetail()
@@ -98,7 +87,6 @@ export default function Chess() {
                   )
                 })}
               </div>
-              <Knight className="pointer-events-none absolute right-0 -top-10 h-28 w-28 text-ink sm:-right-10 sm:-top-14 sm:h-40 sm:w-40" />
               <p className="mt-4 text-[0.72rem] uppercase tracking-[0.18em] text-mute">Select a marked square</p>
             </div>
           </Reveal>

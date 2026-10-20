@@ -43,7 +43,7 @@ Colours, fonts and shared primitives are in `src/index.css` (`@theme` block). Th
 ## Imagery
 
 - The swimming photograph is **"Swimming pool with lane ropes in place"** from Wikimedia Commons, licensed **CC BY 2.0**. Keep the attribution in the figure caption (or in a credits line) if the photo stays. Source: https://commons.wikimedia.org/wiki/File:Swimming_pool_with_lane_ropes_in_place.jpg
-- The football pitch, chessboards, knight, referee badge, book and subject icons are original SVG/CSS illustrations.
+- The football pitch, chessboards, referee badge, book and subject icons are original SVG/CSS illustrations.
 - If an authentic *Poetry Escape* cover becomes available, drop it into `public/img/` and replace the CSS book in `src/sections/Writing.tsx` with an `<img>`.
 
 ## Accessibility and motion
