@@ -1,4 +1,5 @@
 import { Reveal } from '../components/motion'
+import { Open } from '../components/Detail'
 
 const SUBJECTS = [
   {
@@ -30,7 +31,7 @@ export default function Education() {
           </Reveal>
           <Reveal delay={0.1} className="lg:pt-14">
             <dl className="grid grid-cols-2 gap-x-8 gap-y-6 border-t border-line pt-6 sm:grid-cols-3">
-              <div><dt className="eyebrow">School</dt><dd className="mt-1 font-serif text-2xl">Glyn School</dd></div>
+              <div><dt className="eyebrow">School</dt><dd className="mt-1 font-serif text-2xl"><Open id="school" className="link-line" label="Glyn School. Open details">Glyn School</Open></dd></div>
               <div><dt className="eyebrow">Year</dt><dd className="mt-1 font-serif text-2xl">Year 10</dd></div>
               <div><dt className="eyebrow">At Glyn</dt><dd className="mt-1 font-serif text-2xl">Fourth year</dd></div>
             </dl>
@@ -40,11 +41,13 @@ export default function Education() {
 
         <ul className="mt-16 grid grid-cols-2 border-l border-t border-line md:grid-cols-4">
           {SUBJECTS.map((s, i) => (
-            <Reveal key={s.name} as="li" delay={i * 0.08} className="group border-b border-r border-line p-7 transition-colors duration-500 hover:bg-paper-2 sm:p-9">
-              <span className="block text-ink transition-transform duration-500 group-hover:-translate-y-1">{s.icon}</span>
-              <p className="mt-10 font-serif text-[1.7rem] leading-none">{s.name}</p>
-              <span className="mt-4 block h-px w-8 bg-line transition-all duration-500 group-hover:w-16 group-hover:bg-lime-deep" aria-hidden="true" />
-              <p className="mt-3 text-[0.68rem] uppercase tracking-[0.16em] text-mute">GCSE</p>
+            <Reveal key={s.name} as="li" delay={i * 0.08} className="border-b border-r border-line">
+              <Open id={`subject-${s.name.toLowerCase()}`} className="group block h-full w-full p-7 transition-colors duration-500 hover:bg-paper-2 sm:p-9" label={`${s.name}, GCSE. Open details`}>
+                <span className="block text-ink transition-transform duration-500 group-hover:-translate-y-1">{s.icon}</span>
+                <p className="mt-10 font-serif text-[1.7rem] leading-none">{s.name}</p>
+                <span className="mt-4 block h-px w-8 bg-line transition-all duration-500 group-hover:w-16 group-hover:bg-lime-deep" aria-hidden="true" />
+                <p className="mt-3 text-[0.68rem] uppercase tracking-[0.16em] text-mute">GCSE</p>
+              </Open>
             </Reveal>
           ))}
         </ul>

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useInView, useReducedMotion } from 'framer-motion'
 import { Reveal } from '../components/motion'
+import { Open } from '../components/Detail'
 
 function Count({ to, suffix = '' }: { to: number; suffix?: string }) {
   const ref = useRef<HTMLSpanElement>(null)
@@ -25,9 +26,9 @@ function Count({ to, suffix = '' }: { to: number; suffix?: string }) {
 }
 
 const STATS = [
-  { n: 4, unit: 'years', label: 'Swimming helper.' },
-  { n: 3, unit: 'times', label: 'Qualified for the Chess Gigafinal.' },
-  { n: 2, unit: 'teams', label: 'Saturday and Sunday football.' },
+  { n: 4, unit: 'years', label: 'Swimming helper.', id: 'stat-swimming' },
+  { n: 3, unit: 'times', label: 'Qualified for the Chess Gigafinal.', id: 'stat-gigafinal' },
+  { n: 2, unit: 'teams', label: 'Saturday and Sunday football.', id: 'stat-teams' },
 ]
 
 export default function Intro() {
@@ -51,24 +52,27 @@ export default function Intro() {
 
         <div className="mt-20 grid grid-cols-1 border-t border-line sm:grid-cols-3">
           {STATS.map((s, i) => (
-            <Reveal key={s.unit} delay={i * 0.1} className="border-b border-line py-9 sm:border-b-0 sm:border-r sm:px-8 sm:last:border-r-0 sm:first:pl-0">
-              <p className="font-serif text-[clamp(4rem,8vw,6.5rem)] leading-none tracking-tight">
-                <Count to={s.n} />
-                <span className="ml-3 align-middle text-[0.72rem] font-sans font-semibold uppercase tracking-[0.2em] text-mute">{s.unit}</span>
-              </p>
-              <p className="mt-3 text-ink-2">{s.label}</p>
+            <Reveal key={s.unit} delay={i * 0.1} className="border-b border-line sm:border-b-0 sm:border-r sm:last:border-r-0">
+              <Open id={s.id} className="group block w-full py-9 transition-colors duration-300 hover:bg-paper-2 sm:px-8 sm:first:pl-0" label={`${s.n} ${s.unit}: ${s.label} Open details`}>
+                <p className="font-serif text-[clamp(4rem,8vw,6.5rem)] leading-none tracking-tight">
+                  <Count to={s.n} />
+                  <span className="ml-3 align-middle text-[0.72rem] font-sans font-semibold uppercase tracking-[0.2em] text-mute">{s.unit}</span>
+                </p>
+                <p className="mt-3 text-ink-2">{s.label}</p>
+                <span className="mt-3 inline-block text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-mute transition-colors group-hover:text-ink">Open &rarr;</span>
+              </Open>
             </Reveal>
           ))}
         </div>
 
         <Reveal className="mt-12 flex flex-col gap-4 border-t border-line pt-8 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-5">
-            <span className="grid h-12 w-12 place-items-center border border-ink font-serif text-xl" aria-hidden="true">6</span>
+          <Open id="level-6" className="group flex items-center gap-5" label="Level 6 football referee. Open details">
+            <span className="grid h-12 w-12 place-items-center border border-ink font-serif text-xl transition-colors group-hover:bg-ink group-hover:text-paper" aria-hidden="true">6</span>
             <div>
               <p className="text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-mute">Qualified</p>
               <p className="font-serif text-2xl">Level 6 football referee</p>
             </div>
-          </div>
+          </Open>
           <a href="#refereeing" className="link-line text-[0.76rem] font-semibold uppercase tracking-[0.16em] text-ink-2">Read about refereeing</a>
         </Reveal>
       </div>

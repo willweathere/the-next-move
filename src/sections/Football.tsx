@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { useInView } from 'framer-motion'
 import { Reveal } from '../components/motion'
+import { Open } from '../components/Detail'
 
 /* A custom pitch illustration in place of a photograph: pitch lines draw in
    when the section enters view, with a dark monochrome treatment so it reads
@@ -68,23 +69,25 @@ export default function Football() {
             </Reveal>
 
             <Reveal delay={0.15} className="grid grid-cols-2 border-t border-line">
-              <div className="border-r border-line py-6 pr-6">
+              <Open id="team-saturday" className="border-r border-line py-6 pr-6 transition-colors hover:bg-paper-2" label="Saturday team. Open details">
                 <p className="eyebrow">Team one</p>
                 <p className="mt-2 font-serif text-3xl">Saturday</p>
-              </div>
-              <div className="py-6 pl-6">
+              </Open>
+              <Open id="team-sunday" className="py-6 pl-6 transition-colors hover:bg-paper-2" label="Sunday team. Open details">
                 <p className="eyebrow">Team two</p>
                 <p className="mt-2 font-serif text-3xl">Sunday</p>
-              </div>
+              </Open>
             </Reveal>
 
-            <Reveal delay={0.2} className="flex items-start gap-5 border border-ink p-6">
-              <span className="mt-1 grid h-10 w-10 shrink-0 place-items-center bg-ink font-serif text-lg text-paper" aria-hidden="true">C</span>
-              <div>
-                <p className="eyebrow">Captaincy</p>
-                <p className="mt-1 font-serif text-2xl leading-tight">Captained both teams</p>
-                <p className="mt-2 text-[0.95rem] text-ink-2">Teamwork and communication, developed where they matter most.</p>
-              </div>
+            <Reveal delay={0.2}>
+              <Open id="captaincy" className="group flex w-full items-start gap-5 border border-ink p-6 transition-colors hover:bg-ink hover:text-paper" label="Captained both teams. Open details">
+                <span className="mt-1 grid h-10 w-10 shrink-0 place-items-center bg-ink font-serif text-lg text-paper transition-colors group-hover:bg-lime group-hover:text-ink" aria-hidden="true">C</span>
+                <div>
+                  <p className="eyebrow group-hover:text-paper/60">Captaincy</p>
+                  <p className="mt-1 font-serif text-2xl leading-tight">Captained both teams</p>
+                  <p className="mt-2 text-[0.95rem] text-ink-2 group-hover:text-paper/75">Teamwork and communication, developed where they matter most.</p>
+                </div>
+              </Open>
             </Reveal>
           </div>
         </div>

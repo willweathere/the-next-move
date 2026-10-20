@@ -9,6 +9,7 @@ import DofE from './sections/DofE'
 import Writing from './sections/Writing'
 import Education from './sections/Education'
 import Skills from './sections/Skills'
+import { DetailProvider } from './components/Detail'
 
 function SectionMarker({ id, label }: { id: string; label: string }) {
   // Anchor targets for the primary navigation: a quiet running head that
@@ -25,7 +26,7 @@ function SectionMarker({ id, label }: { id: string; label: string }) {
 
 export default function App() {
   return (
-    <>
+    <DetailProvider>
       <a href="#about" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:bg-ink focus:px-4 focus:py-2 focus:text-paper">Skip to content</a>
       <Nav />
       <main>
@@ -49,6 +50,6 @@ export default function App() {
           <a href="#top" className="link-line text-[0.72rem] font-semibold uppercase tracking-[0.18em]">Back to the board</a>
         </div>
       </footer>
-    </>
+    </DetailProvider>
   )
 }

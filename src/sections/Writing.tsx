@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { Reveal, EASE } from '../components/motion'
+import { Open } from '../components/Detail'
 
 /* The book is CSS: a spine, a cover and a page that lifts as the section
    enters. A real cover image can replace the illustration later. */
@@ -11,7 +12,8 @@ export default function Writing() {
       <div className="wrap">
         <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-[1fr_1fr] lg:gap-20">
           <Reveal className="order-2 lg:order-1">
-            <div className="relative mx-auto aspect-[3/4] w-full max-w-[360px]" aria-hidden="true">
+            <Open id="poetry-escape" className="group relative mx-auto block aspect-[3/4] w-full max-w-[360px] transition-transform duration-500 hover:-translate-y-1" label="Poetry Escape. Open details">
+            <div className="absolute inset-0" aria-hidden="true">
               {/* Shadow page beneath */}
               <div className="absolute inset-0 translate-x-3 translate-y-3 border border-ink/20 bg-paper" />
               {/* Page that reveals */}
@@ -37,6 +39,7 @@ export default function Writing() {
               </div>
               <div className="absolute inset-y-0 left-0 w-[10px] bg-ink/85" />
             </div>
+            </Open>
           </Reveal>
 
           <div className="order-1 lg:order-2">
@@ -45,7 +48,7 @@ export default function Writing() {
               <h2 className="display mt-5">Every story<br />has a voice.</h2>
             </Reveal>
             <Reveal delay={0.1}>
-              <p className="mt-8 font-serif text-[clamp(2rem,4vw,3rem)] leading-tight">Poetry Escape</p>
+              <Open id="poetry-escape" className="link-line mt-8 inline-block font-serif text-[clamp(2rem,4vw,3rem)] leading-tight" label="Poetry Escape. Open details">Poetry Escape</Open>
               <p className="mt-5 max-w-[48ch] text-[1.1rem] leading-relaxed text-ink-2">
                 Published writing demonstrating creativity, written communication and the ability to express ideas through language.
               </p>

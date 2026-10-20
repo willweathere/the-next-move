@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { useInView } from 'framer-motion'
 import { Reveal } from '../components/motion'
+import { Open } from '../components/Detail'
 
 const PARTS = [
   {
@@ -54,11 +55,12 @@ export default function DofE() {
             {PARTS.map((p, i) => (
               <Reveal key={p.k} as="li" delay={i * 0.12} className="relative pl-14 pb-12 md:pb-0 md:pl-0 md:pr-10">
                 <span className="absolute left-[14px] top-[34px] h-3 w-3 -translate-x-1/2 bg-ink md:left-0 md:top-[34px] md:translate-x-0" aria-hidden="true" />
-                <div className="text-ink md:pt-16">
-                  {p.icon}
+                <Open id={`dofe-${p.k.toLowerCase()}`} className="group block text-ink md:pt-16" label={`${p.k}: ${p.v} Open details`}>
+                  <span className="inline-block transition-transform duration-500 group-hover:-translate-y-1">{p.icon}</span>
                   <p className="eyebrow mt-5">{p.k}</p>
                   <p className="mt-2 font-serif text-[2rem] leading-tight">{p.v}</p>
-                </div>
+                  <span className="mt-3 inline-block text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-mute transition-colors group-hover:text-ink">Open &rarr;</span>
+                </Open>
               </Reveal>
             ))}
           </ol>

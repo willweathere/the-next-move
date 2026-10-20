@@ -1,4 +1,5 @@
 import { Reveal } from '../components/motion'
+import { Open } from '../components/Detail'
 
 const PRINCIPLES = [
   { n: '01', title: 'Understand the rules.', text: 'Knowing the laws of the game well enough to apply them without hesitation.' },
@@ -52,11 +53,13 @@ export default function Refereeing() {
 
         <ol className="mt-20 grid grid-cols-1 border-t border-paper/15 md:grid-cols-3">
           {PRINCIPLES.map((p, i) => (
-            <Reveal key={p.n} as="li" delay={i * 0.1} className="group border-b border-paper/15 py-8 transition-colors duration-500 md:border-b-0 md:border-r md:px-8 md:last:border-r-0 md:first:pl-0 md:hover:bg-paper/[0.03]">
-              <p className="font-serif text-xl text-lime">{p.n}</p>
-              <span className="mt-4 block h-px w-10 bg-paper/40 transition-all duration-500 group-hover:w-20 group-hover:bg-lime" aria-hidden="true" />
-              <h3 className="mt-5 text-[1.6rem] uppercase tracking-tight">{p.title}</h3>
-              <p className="mt-3 max-w-[32ch] text-[0.95rem] text-paper/65">{p.text}</p>
+            <Reveal key={p.n} as="li" delay={i * 0.1} className="border-b border-paper/15 md:border-b-0 md:border-r md:last:border-r-0">
+              <Open id={`principle-${i + 1}`} className="group block w-full py-8 transition-colors duration-500 md:px-8 md:first:pl-0 md:hover:bg-paper/[0.04]" label={`${p.n} ${p.title} Open details`}>
+                <p className="font-serif text-xl text-lime">{p.n}</p>
+                <span className="mt-4 block h-px w-10 bg-paper/40 transition-all duration-500 group-hover:w-20 group-hover:bg-lime" aria-hidden="true" />
+                <h3 className="mt-5 text-[1.6rem] uppercase tracking-tight text-paper">{p.title}</h3>
+                <p className="mt-3 max-w-[32ch] text-[0.95rem] text-paper/65">{p.text}</p>
+              </Open>
             </Reveal>
           ))}
         </ol>

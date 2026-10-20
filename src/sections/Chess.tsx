@@ -1,5 +1,7 @@
 import { useState } from 'react'
+import { useDetail } from '../components/Detail'
 import { Reveal } from '../components/motion'
+import { Open } from '../components/Detail'
 
 /* A monochrome 6×6 board as a graphic object: hovering or focusing a square
    lifts it, and three marked squares stand for the three Gigafinal
@@ -20,6 +22,7 @@ function Knight({ className = '' }: { className?: string }) {
 
 export default function Chess() {
   const [hover, setHover] = useState<number | null>(null)
+  const { open: openDetail } = useDetail()
   const squares = Array.from({ length: 36 }, (_, i) => i)
 
   return (
@@ -38,11 +41,11 @@ export default function Chess() {
             </Reveal>
 
             <Reveal delay={0.15} className="mt-10 grid grid-cols-2 gap-x-8 gap-y-6 border-t border-line pt-8 sm:grid-cols-4">
-              {['Strategic thinking', 'Concentration', 'Patience', 'Decision-making'].map((t) => (
-                <div key={t}>
-                  <span className="block h-px w-8 bg-ink" aria-hidden="true" />
+              {([['Strategic thinking', 'theme-strategic'], ['Concentration', 'theme-concentration'], ['Patience', 'theme-patience'], ['Decision-making', 'theme-decision']] as const).map(([t, id]) => (
+                <Open key={t} id={id} className="group" label={`${t}. Open details`}>
+                  <span className="block h-px w-8 bg-ink transition-all duration-500 group-hover:w-14 group-hover:bg-lime-deep" aria-hidden="true" />
                   <p className="mt-3 text-[0.8rem] font-semibold uppercase tracking-[0.14em]">{t}</p>
-                </div>
+                </Open>
               ))}
             </Reveal>
 
@@ -51,14 +54,14 @@ export default function Chess() {
                 <p className="eyebrow">Gigafinal qualifications</p>
                 <div className="mt-3 flex items-center gap-3" aria-label="Three qualifications">
                   {[1, 2, 3].map((n) => (
-                    <span key={n} className="grid h-11 w-11 place-items-center border border-ink font-serif text-lg">{n}</span>
+                    <Open key={n} id={`gigafinal-${n}`} className="grid h-11 w-11 place-items-center border border-ink font-serif text-lg transition-colors hover:bg-ink hover:text-paper" label={`Gigafinal qualification ${n}. Open details`}>{n}</Open>
                   ))}
                 </div>
               </div>
-              <div className="border-l-2 border-lime pl-5">
+              <Open id="surrey-county" className="group border-l-2 border-lime pl-5 transition-colors hover:border-ink" label="Surrey County U1450. Open details">
                 <p className="eyebrow">County</p>
                 <p className="mt-1 font-serif text-2xl">Surrey County · U1450</p>
-              </div>
+              </Open>
             </Reveal>
           </div>
 
@@ -72,12 +75,16 @@ export default function Chess() {
                   return (
                     <div
                       key={i}
+                      role={mark ? 'button' : undefined}
+                      onClick={mark ? () => openDetail(`gigafinal-${i === 9 ? 1 : i === 16 ? 2 : 3}`) : undefined}
+                      onKeyDown={mark ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDetail(`gigafinal-${i === 9 ? 1 : i === 16 ? 2 : 3}`) } } : undefined}
+                      aria-label={mark ? `${mark}. Open details` : undefined}
                       tabIndex={mark ? 0 : -1}
                       onMouseEnter={() => setHover(i)}
                       onMouseLeave={() => setHover(null)}
                       onFocus={() => setHover(i)}
                       onBlur={() => setHover(null)}
-                      className={`relative aspect-square transition-transform duration-500 ${dark ? 'bg-ink' : 'bg-ivory'} ${lifted ? 'z-10 scale-[1.06] shadow-[0_18px_40px_-20px_rgba(0,0,0,0.6)]' : ''}`}
+                      className={`relative aspect-square transition-transform duration-500 ${dark ? 'bg-ink' : 'bg-ivory'} ${mark ? 'cursor-pointer' : ''} ${lifted ? 'z-10 scale-[1.06] shadow-[0_18px_40px_-20px_rgba(0,0,0,0.6)]' : ''}`}
                     >
                       {mark && (
                         <>
@@ -92,7 +99,7 @@ export default function Chess() {
                 })}
               </div>
               <Knight className="pointer-events-none absolute right-0 -top-10 h-28 w-28 text-ink sm:-right-10 sm:-top-14 sm:h-40 sm:w-40" />
-              <p className="mt-4 text-[0.72rem] uppercase tracking-[0.18em] text-mute">Hover a marked square</p>
+              <p className="mt-4 text-[0.72rem] uppercase tracking-[0.18em] text-mute">Select a marked square</p>
             </div>
           </Reveal>
         </div>
