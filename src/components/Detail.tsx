@@ -1,10 +1,11 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ButtonHTMLAttributes, type ReactNode } from 'react'
+import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { EASE } from './motion'
+import { CHAPTERS } from '../content'
 
-/* "Little pages": any clickable fact on the site opens a focused detail panel
-   with the verified information behind it, the skills it demonstrates and a
-   link to its section. One panel for the whole site, driven by an id. */
+/* "Little pages": any clickable fact on the site opens a focused detail
+   sheet with the verified information behind it, the skills it shows and
+   a link to its chapter. One sheet for the whole site, driven by an id. */
 
 export type DetailPage = {
   id: string
@@ -104,11 +105,11 @@ export function DetailProvider({ children }: { children: ReactNode }) {
   )
 }
 
-/** A button that opens a detail page. Renders its children unchanged. */
-export function Open({ id, className, children, label }: { id: string; className?: string; children: ReactNode; label?: string }) {
+/** A button that opens a detail page. Extra button props (hover handlers, style) pass through. */
+export function Open({ id, className, children, label, ...rest }: { id: string; className?: string; children: ReactNode; label?: string } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'id' | 'onClick'>) {
   const { open } = useDetail()
   return (
-    <button type="button" onClick={() => open(id)} className={`cursor-pointer text-left ${className || ''}`} aria-haspopup="dialog" aria-label={label}>
+    <button {...rest} type="button" onClick={() => open(id)} className={`cursor-pointer text-left ${className || ''}`} aria-haspopup="dialog" aria-label={label}>
       {children}
     </button>
   )
@@ -118,6 +119,14 @@ function DetailDialog({ page, onClose }: { page: DetailPage | null; onClose: () 
   const reduce = useReducedMotion()
   const panel = useRef<HTMLDivElement>(null)
   const opener = useRef<Element | null>(null)
+  const [wide, setWide] = useState(() => typeof window !== 'undefined' && window.matchMedia('(min-width: 768px)').matches)
+
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 768px)')
+    const on = () => setWide(mq.matches)
+    mq.addEventListener('change', on)
+    return () => mq.removeEventListener('change', on)
+  }, [])
 
   useEffect(() => {
     if (!page) return
@@ -140,83 +149,92 @@ function DetailDialog({ page, onClose }: { page: DetailPage | null; onClose: () 
       document.removeEventListener('keydown', onKey)
       document.body.style.overflow = prev
       window.clearTimeout(t)
-      ;(opener.current as HTMLElement | null)?.focus?.()
+      ;(opener.current as HTMLElement | null)?.focus?.({ preventScroll: true })
     }
   }, [page, onClose])
+
+  const ch = page ? CHAPTERS.find((c) => `#${c.id}` === page.section.href) : undefined
+  const from = wide ? { x: 48, opacity: 0 } : { y: 48, opacity: 0 }
 
   return (
     <AnimatePresence>
       {page && (
-        <motion.div
-          className="fixed inset-0 z-[80] flex items-end justify-center bg-ink/60 p-0 sm:items-center sm:p-6"
+        <m.div
+          className="fixed inset-0 z-[80] flex items-end justify-end bg-ink/55 md:items-stretch"
           initial={reduce ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={reduce ? undefined : { opacity: 0, transition: { duration: 0.2, ease: EASE } }}
           transition={{ duration: 0.3, ease: EASE }}
           onMouseDown={(e) => { if (e.target === e.currentTarget) onClose() }}
         >
-          <motion.div
+          <m.div
             ref={panel}
             role="dialog"
             aria-modal="true"
             aria-labelledby="detail-title"
-            className="relative w-full max-w-[640px] bg-paper text-ink shadow-[0_40px_120px_-30px_rgba(0,0,0,0.6)] sm:border sm:border-ink"
-            initial={reduce ? false : { y: 24, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={reduce ? undefined : { y: 12, opacity: 0, transition: { duration: 0.2, ease: EASE } }}
-            transition={{ duration: 0.45, ease: EASE }}
+            className="relative flex max-h-[88svh] w-full flex-col bg-paper text-ink shadow-[0_40px_120px_-30px_rgba(0,0,0,0.6)] md:max-h-none md:w-[min(560px,92vw)]"
+            initial={reduce ? false : from}
+            animate={{ x: 0, y: 0, opacity: 1 }}
+            exit={reduce ? undefined : { ...from, transition: { duration: 0.2, ease: EASE } }}
+            transition={{ duration: 0.5, ease: EASE }}
           >
-            <div className="checker absolute inset-x-0 top-0 h-2" style={{ ['--s' as string]: '8px', ['--c' as string]: '#121212' }} aria-hidden="true" />
-            <div className="max-h-[85svh] overflow-y-auto p-7 pt-9 sm:p-10 sm:pt-12">
-              <div className="flex items-start justify-between gap-6">
-                <div>
-                  <p className="eyebrow">{page.kicker}</p>
-                  <h2 id="detail-title" className="mt-3 font-serif text-[clamp(2rem,5vw,3rem)] leading-[1]">{page.title}</h2>
-                </div>
-                <button
-                  type="button"
-                  onClick={onClose}
-                  data-autofocus
-                  className="grid h-11 w-11 shrink-0 place-items-center border border-line text-[0.7rem] font-semibold uppercase tracking-[0.14em] transition-colors hover:border-ink"
-                  aria-label="Close"
-                >
-                  <svg viewBox="0 0 20 20" className="h-4 w-4" aria-hidden="true"><path d="M4 4l12 12M16 4L4 16" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
-                </button>
-              </div>
+            <div className="checker h-2 shrink-0" style={{ ['--s' as string]: '8px', ['--c' as string]: '#121212' }} aria-hidden="true" />
+            <div className="flex items-center justify-between gap-4 border-b border-line px-7 py-4 sm:px-10">
+              <p className="t-label t-num flex items-center gap-3 text-mute">
+                <span className="h-2 w-2 bg-lime" aria-hidden="true" />
+                {ch ? <><span className="text-ink">{ch.n}</span><span aria-hidden="true">/</span><span className="font-serif text-[0.95rem] normal-case italic tracking-normal">{ch.square}</span><span>{ch.short}</span></> : page.section.label}
+              </p>
+              <button
+                type="button"
+                onClick={onClose}
+                data-autofocus
+                className="grid h-11 w-11 shrink-0 place-items-center border border-line transition-colors hover:border-ink hover:bg-ink hover:text-paper"
+                aria-label="Close"
+              >
+                <svg viewBox="0 0 20 20" className="h-4 w-4" aria-hidden="true"><path d="M4 4l12 12M16 4L4 16" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
+              </button>
+            </div>
 
-              <div className="mt-7 space-y-4 text-[1.05rem] leading-relaxed text-ink-2">
+            <div className="flex-1 overflow-y-auto px-7 pb-10 pt-8 sm:px-10 md:pt-14">
+              <p className="t-label text-mute">{page.kicker}</p>
+              <h2 id="detail-title" className="mt-3 font-serif text-[clamp(2.4rem,5vw,3.6rem)] leading-[0.98] tracking-[-0.015em]">{page.title}</h2>
+
+              <div className="mt-8 space-y-4 text-[1.08rem] leading-relaxed text-ink-2">
                 {page.body.map((p, i) => <p key={i}>{p}</p>)}
               </div>
 
               {page.facts && (
-                <dl className="mt-7 grid grid-cols-2 gap-6 border-t border-line pt-6">
-                  {page.facts.map((f) => (
-                    <div key={f.k}><dt className="eyebrow">{f.k}</dt><dd className="mt-1 font-serif text-2xl">{f.v}</dd></div>
+                <dl className="mt-9 grid grid-cols-2 border-t border-ink">
+                  {page.facts.map((f, i) => (
+                    <div key={f.k} className={`py-5 ${i % 2 === 0 ? 'border-r border-line pr-4' : 'pl-5'}`}>
+                      <dt className="t-label text-mute">{f.k}</dt>
+                      <dd className="m-0 mt-2 font-serif text-[1.7rem] leading-tight">{f.v}</dd>
+                    </div>
                   ))}
                 </dl>
               )}
 
               {page.skills && (
-                <div className="mt-7 border-t border-line pt-6">
-                  <p className="eyebrow">Transferable skills</p>
-                  <ul className="mt-3 flex flex-wrap gap-2">
+                <div className="mt-9 border-t border-line pt-6">
+                  <p className="t-label text-mute">Transferable skills</p>
+                  <ul className="mt-4 flex flex-wrap gap-2">
                     {page.skills.map((s) => (
-                      <li key={s} className="border border-line px-3 py-1.5 text-[0.74rem] font-semibold uppercase tracking-[0.12em]">{s}</li>
+                      <li key={s} className="border border-ink/20 px-3 py-2 text-[0.74rem] font-semibold uppercase tracking-[0.12em]">{s}</li>
                     ))}
                   </ul>
                 </div>
               )}
-
-              <div className="mt-8 flex flex-wrap items-center gap-6 border-t border-line pt-6">
-                <a href={page.section.href} onClick={onClose} className="inline-flex items-center gap-3 bg-ink px-5 py-3 text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-paper transition-colors hover:bg-lime hover:text-ink">
-                  Go to {page.section.label}
-                  <span aria-hidden="true" className="inline-block h-px w-5 bg-current" />
-                </a>
-                <button type="button" onClick={onClose} className="link-line text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-ink-2">Back</button>
-              </div>
             </div>
-          </motion.div>
-        </motion.div>
+
+            <div className="flex flex-wrap items-center gap-6 border-t border-line px-7 py-5 sm:px-10">
+              <a href={page.section.href} onClick={onClose} className="btn btn--solid">
+                Go to {page.section.label}
+                <svg className="arrow h-3 w-5" viewBox="0 0 20 12" aria-hidden="true"><path d="M0 6h18M13 1l5 5-5 5" fill="none" stroke="currentColor" strokeWidth="1.4" /></svg>
+              </a>
+              <button type="button" onClick={onClose} className="link-line t-label inline-flex min-h-11 items-center text-ink-2">Back</button>
+            </div>
+          </m.div>
+        </m.div>
       )}
     </AnimatePresence>
   )

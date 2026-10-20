@@ -1,79 +1,81 @@
-import { useEffect, useRef, useState } from 'react'
-import { useInView, useReducedMotion } from 'framer-motion'
-import { Reveal } from '../components/motion'
+import { useEffect, useState } from 'react'
+import { useReducedMotion } from 'framer-motion'
+import { ChapterHead, MaskLines, Reveal, useShown } from '../components/motion'
 import { Open } from '../components/Detail'
+import { chapter } from '../content'
 
-function Count({ to, suffix = '' }: { to: number; suffix?: string }) {
-  const ref = useRef<HTMLSpanElement>(null)
-  const inView = useInView(ref, { once: true, margin: '0px 0px -10% 0px' })
+function Count({ to }: { to: number }) {
+  const [ref, inView] = useShown<HTMLSpanElement>()
   const reduce = useReducedMotion()
   const [n, setN] = useState(reduce ? to : 0)
   useEffect(() => {
     if (!inView || reduce) return
     const start = performance.now()
-    const dur = 1100
     let raf = 0
     const tick = (t: number) => {
-      const p = Math.min(1, (t - start) / dur)
-      const eased = 1 - Math.pow(1 - p, 3)
-      setN(Math.round(eased * to))
+      const p = Math.min(1, (t - start) / 1200)
+      setN(Math.round((1 - Math.pow(1 - p, 3)) * to))
       if (p < 1) raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
   }, [inView, to, reduce])
-  return <span ref={ref}>{n}{suffix}</span>
+  return <span ref={ref} className="t-num">{n}</span>
 }
 
 const STATS = [
-  { n: 4, unit: 'years', label: 'Swimming helper.', id: 'stat-swimming' },
-  { n: 3, unit: 'times', label: 'Qualified for the Chess Gigafinal.', id: 'stat-gigafinal' },
-  { n: 2, unit: 'teams', label: 'Saturday and Sunday football.', id: 'stat-teams' },
+  { n: 4, unit: 'Years', label: 'Swimming helper.', id: 'stat-swimming' },
+  { n: 3, unit: 'Times', label: 'Qualified for the Chess Gigafinal.', id: 'stat-gigafinal' },
+  { n: 2, unit: 'Teams', label: 'Saturday and Sunday football.', id: 'stat-teams' },
 ]
 
 export default function Intro() {
+  const c = chapter('about')
   return (
     <section id="about" className="section bg-paper">
       <div className="wrap">
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1.2fr] lg:gap-20">
-          <Reveal>
-            <p className="eyebrow">About</p>
-            <h2 className="display mt-5">More than<br />the game.</h2>
-          </Reveal>
-          <Reveal delay={0.1} className="lg:pt-14">
-            <p className="max-w-[56ch] text-[1.15rem] leading-relaxed text-ink-2 sm:text-[1.25rem]">
+        <ChapterHead n={c.n} square={c.square} label={c.label} />
+        <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-[1.05fr_1fr] lg:gap-24">
+          <MaskLines className="t-display" lines={['More than', 'the game.']} />
+          <Reveal delay={0.1} className="lg:pt-4">
+            <p className="t-lead measure text-ink">
               From competitive football and chess tournaments to refereeing, volunteering and published writing, I enjoy developing new skills, taking on challenges and working towards long-term goals.
             </p>
-            <p className="mt-5 max-w-[56ch] text-ink-2/80">
+            <p className="measure mt-5 text-ink-2">
               This portfolio collects what I have done so far and what each experience has taught me. The pieces are different; the habits behind them are the same.
             </p>
           </Reveal>
         </div>
 
-        <div className="mt-20 grid grid-cols-1 border-t border-line sm:grid-cols-3">
+        <ol className="mt-20 grid grid-cols-1 border-t border-ink sm:mt-24 sm:grid-cols-3">
           {STATS.map((s, i) => (
-            <Reveal key={s.unit} delay={i * 0.1} className="border-b border-line sm:border-b-0 sm:border-r sm:last:border-r-0">
-              <Open id={s.id} className="group block w-full py-9 transition-colors duration-300 hover:bg-paper-2 sm:px-8 sm:first:pl-0" label={`${s.n} ${s.unit}: ${s.label} Open details`}>
-                <p className="font-serif text-[clamp(4rem,8vw,6.5rem)] leading-none tracking-tight">
-                  <Count to={s.n} />
-                  <span className="ml-3 align-middle text-[0.72rem] font-sans font-semibold uppercase tracking-[0.2em] text-mute">{s.unit}</span>
-                </p>
-                <p className="mt-3 text-ink-2">{s.label}</p>
-                <span className="mt-3 inline-block text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-mute transition-colors group-hover:text-ink">Open &rarr;</span>
+            <Reveal as="li" key={s.id} delay={i * 0.1} className="border-b border-line sm:border-b-0 sm:border-r sm:last:border-r-0">
+              <Open id={s.id} className="group relative block w-full py-8 sm:px-8 sm:py-10 sm:first:pl-0" label={`${s.n} ${s.unit.toLowerCase()}: ${s.label} Open details`}>
+                <span className="flex items-end gap-4">
+                  <span className="font-serif text-[clamp(5rem,9.5vw,8.5rem)] leading-[0.8] tracking-[-0.03em]"><Count to={s.n} /></span>
+                  <span className="t-label mb-2 text-mute">{s.unit}</span>
+                </span>
+                <span className="mt-6 block text-[1.02rem] text-ink-2">{s.label}</span>
+                <span className="t-label mt-5 flex items-center gap-2 text-mute transition-colors group-hover:text-ink">
+                  More
+                  <svg className="h-2.5 w-4 transition-transform duration-300 group-hover:translate-x-1" viewBox="0 0 20 12" aria-hidden="true"><path d="M0 6h18M13 1l5 5-5 5" fill="none" stroke="currentColor" strokeWidth="1.6" /></svg>
+                </span>
               </Open>
             </Reveal>
           ))}
-        </div>
+        </ol>
 
-        <Reveal className="mt-12 flex flex-col gap-4 border-t border-line pt-8 sm:flex-row sm:items-center sm:justify-between">
-          <Open id="level-6" className="group flex items-center gap-5" label="Level 6 football referee. Open details">
-            <span className="grid h-12 w-12 place-items-center border border-ink font-serif text-xl transition-colors group-hover:bg-ink group-hover:text-paper" aria-hidden="true">6</span>
-            <div>
-              <p className="text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-mute">Qualified</p>
-              <p className="font-serif text-2xl">Level 6 football referee</p>
-            </div>
-          </Open>
-          <a href="#refereeing" className="link-line text-[0.76rem] font-semibold uppercase tracking-[0.16em] text-ink-2">Read about refereeing</a>
+        <Reveal className="mt-14 sm:mt-16">
+          <div className="flex flex-col gap-6 bg-ink p-6 text-paper sm:flex-row sm:items-center sm:justify-between sm:p-8">
+            <Open id="level-6" className="on-dark group flex items-center gap-6" label="Qualified Level 6 football referee. Open details">
+              <span className="grid h-16 w-16 shrink-0 place-items-center border border-paper/40 font-serif text-3xl transition-colors duration-300 group-hover:border-lime group-hover:bg-lime group-hover:text-ink" aria-hidden="true">6</span>
+              <span>
+                <span className="t-label block text-paper/50">Qualified</span>
+                <span className="mt-1 block font-serif text-[clamp(1.6rem,3vw,2.3rem)] leading-tight">Level 6 football referee</span>
+              </span>
+            </Open>
+            <a href="#refereeing" className="on-dark link-line t-label inline-flex min-h-11 items-center self-start text-paper/70 hover:text-paper sm:self-auto">Read about refereeing</a>
+          </div>
         </Reveal>
       </div>
     </section>

@@ -1,62 +1,57 @@
-import { motion, useReducedMotion } from 'framer-motion'
-import { Reveal, EASE } from '../components/motion'
+import { ChapterHead, MaskLines, Reveal } from '../components/motion'
 import { Open } from '../components/Detail'
+import { chapter } from '../content'
 
-/* The book is CSS: a spine, a cover and a page that lifts as the section
-   enters. A real cover image can replace the illustration later. */
+/* The book is built with CSS 3D: cover, spine, page block and back board.
+   It rests at an angle and the cover opens a little on hover or focus.
+   It is an illustration, labelled as such: not the published cover. */
 
 export default function Writing() {
-  const reduce = useReducedMotion()
+  const c = chapter('writing')
   return (
-    <section id="writing" className="section bg-ivory">
-      <div className="wrap">
-        <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-[1fr_1fr] lg:gap-20">
-          <Reveal className="order-2 lg:order-1">
-            <Open id="poetry-escape" className="group relative mx-auto block aspect-[3/4] w-full max-w-[360px] transition-transform duration-500 hover:-translate-y-1" label="Poetry Escape. Open details">
-            <div className="absolute inset-0" aria-hidden="true">
-              {/* Shadow page beneath */}
-              <div className="absolute inset-0 translate-x-3 translate-y-3 border border-ink/20 bg-paper" />
-              {/* Page that reveals */}
-              <motion.div
-                className="absolute inset-0 origin-left border border-ink/30 bg-paper"
-                initial={reduce ? false : { rotateY: -70, opacity: 0 }}
-                whileInView={{ rotateY: 0, opacity: 1 }}
-                viewport={{ once: true, margin: '0px 0px -15% 0px' }}
-                transition={{ duration: 1.4, ease: EASE, delay: 0.2 }}
-                style={{ transformPerspective: 1200 }}
-              />
-              {/* Cover */}
-              <div className="absolute inset-0 flex flex-col justify-between border border-ink bg-ink p-7 text-paper">
-                <div className="flex items-center justify-between text-[0.6rem] uppercase tracking-[0.22em] text-paper/60">
-                  <span>Anthology</span>
-                  <span>Contributor</span>
-                </div>
-                <div>
-                  <p className="font-serif text-[2.6rem] leading-[0.95] tracking-tight">Poetry<br /><em className="text-lime">Escape</em></p>
-                  <span className="mt-5 block h-px w-14 bg-paper/40" />
-                </div>
-                <p className="text-[0.6rem] uppercase tracking-[0.22em] text-paper/60">Published writing</p>
-              </div>
-              <div className="absolute inset-y-0 left-0 w-[10px] bg-ink/85" />
-            </div>
-            </Open>
-          </Reveal>
-
-          <div className="order-1 lg:order-2">
-            <Reveal>
-              <p className="eyebrow">Published writing</p>
-              <h2 className="display mt-5">Every story<br />has a voice.</h2>
-            </Reveal>
+    <section id="writing" className="grain section relative overflow-hidden bg-ivory">
+      <div className="wrap relative">
+        <ChapterHead n={c.n} square={c.square} label={c.label} />
+        <div className="mt-10 grid grid-cols-1 items-center gap-16 lg:grid-cols-[1fr_1.05fr] lg:gap-24">
+          <div>
+            <MaskLines className="t-display" lines={['Every story', 'has a voice.']} />
             <Reveal delay={0.1}>
-              <Open id="poetry-escape" className="link-line mt-8 inline-block font-serif text-[clamp(2rem,4vw,3rem)] leading-tight" label="Poetry Escape. Open details">Poetry Escape</Open>
-              <p className="mt-5 max-w-[48ch] text-[1.1rem] leading-relaxed text-ink-2">
+              <p className="t-label mt-10 text-mute">Published in</p>
+              <Open id="poetry-escape" className="link-line mt-2 inline-block font-serif text-[clamp(2.4rem,4.6vw,3.8rem)] italic leading-none" label="Poetry Escape. Open details">
+                Poetry Escape
+              </Open>
+              <p className="t-lead measure mt-8 text-ink-2">
                 Published writing demonstrating creativity, written communication and the ability to express ideas through language.
               </p>
-              <p className="mt-4 max-w-[48ch] text-ink-2/80">
+              <p className="measure mt-4 text-ink-2/80">
                 Having work selected for a published book is a reminder that writing is a skill like any other: it improves with practice and it carries ideas further than you expect.
               </p>
             </Reveal>
           </div>
+
+          <Reveal delay={0.15} className="order-first lg:order-none">
+            <Open id="poetry-escape" className="book-stage mx-auto block w-[62%] max-w-[330px] py-6 sm:w-[48%] lg:w-[64%]" label="Book illustration: Poetry Escape. Open details">
+              <span className="book block" aria-hidden="true">
+                <span className="book-back" />
+                <span className="book-pages" />
+                <span className="book-edge" />
+                <span className="book-spine" />
+                <span className="book-cover">
+                  <span className="book-cover-inside" />
+                  <span className="book-cover-front flex flex-col justify-between bg-ink p-[9%] text-paper shadow-[inset_6px_0_10px_-6px_rgba(255,255,255,0.18)]">
+                    <span className="t-label text-[0.55rem] text-paper/50">Published writing</span>
+                    <span>
+                      <span className="block font-serif text-[clamp(2.2rem,4.2vw,3rem)] leading-[0.9] tracking-tight">Poetry</span>
+                      <span className="block font-serif text-[clamp(2.2rem,4.2vw,3rem)] italic leading-[0.9] tracking-tight text-lime">Escape</span>
+                      <span className="mt-5 block h-px w-12 bg-paper/40" />
+                    </span>
+                    <span className="grid h-4 w-4 grid-cols-2 grid-rows-2 border border-paper/40"><span className="bg-paper/40" /><span /><span /><span className="bg-paper/40" /></span>
+                  </span>
+                </span>
+              </span>
+              <span className="mt-12 block text-center text-[0.7rem] uppercase tracking-[0.16em] text-mute">Illustration, not the published cover</span>
+            </Open>
+          </Reveal>
         </div>
       </div>
     </section>
